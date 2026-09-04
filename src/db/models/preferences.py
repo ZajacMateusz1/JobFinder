@@ -2,7 +2,6 @@ from decimal import Decimal
 from sqlalchemy import ForeignKey, String, DECIMAL
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.connection import Base
-from src.db.models.user import User
 
 
 class Preferences(Base):
@@ -16,4 +15,4 @@ class Preferences(Base):
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"), unique=True, nullable=False
     )
-    user: Mapped[User] = relationship(back_populates="preferences")
+    user: Mapped["User"] = relationship(back_populates="preferences")
