@@ -2,7 +2,7 @@ import jwt
 from datetime import datetime, timedelta, timezone
 
 from .repository import AuthRepository
-from .utils import hash_password, verify_password
+from .utils import hash_password, verify_password, validate_jwt_payload
 from .schemas import RegisterRequest
 from .exceptions import InvalidCredentialsError
 
@@ -48,9 +48,10 @@ class AuthService:
         if not refresh_token:
             raise InvalidCredentialsError()
         try:
-            payload = jwt.decode(refresh_token, self.secret_key, self.jwt_algorithm)
+            decoded = jwt.decode(refresh_token, self.secret_key, self.jwt_algorithm)
         except jwt.PyJWTError:
             raise InvalidCredentialsError()
+        payload = validate_jwt_payload(decoded)
         if payload.get("type") != "refresh":
             raise InvalidCredentialsError()
         new_access_token = self._generate_token(payload["sub"], payload["username"])
