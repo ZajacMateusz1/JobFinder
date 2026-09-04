@@ -1,10 +1,10 @@
-from fastapi import HTTPException
 import jwt
 from datetime import datetime, timedelta, timezone
 
 from .repository import AuthRepository
-from .utils import hash_password, verify_password
+from .utils import hash_password, verify_password, validate_jwt_payload
 from .schemas import RegisterRequest
+from .exceptions import InvalidCredentialsError, InvalidJwtTokenError
 
 
 class AuthService:
@@ -12,7 +12,7 @@ class AuthService:
         self,
         auth_repository: AuthRepository,
         secret_key: str,
-        jwt_algorithm: str = "HS256",
+        jwt_algorithm: str,
     ):
         self.auth_repository = auth_repository
         self.secret_key = secret_key
@@ -20,44 +20,69 @@ class AuthService:
 
     def register_user(self, user: RegisterRequest) -> dict:
         hashed_password = hash_password(user.password)
-        return self.auth_repository.create_user(
+        create_user_response = self.auth_repository.create_user(
             user.username,
             hashed_password,
             user.email,
         )
+        refresh_token = self._generate_token(
+            create_user_response["id"], create_user_response["username"], True
+        )
+        access_token = self._generate_token(
+            create_user_response["id"], create_user_response["username"]
+        )
+        create_user_response["access_token"] = access_token
+        return {"refresh_token": refresh_token, "response": create_user_response}
 
     def authenticate_user(self, username: str, password: str) -> dict:
         user = self.auth_repository.get_user_by_username(username)
         if not user:
-            raise HTTPException(
-                status_code=401, detail="Username or password incorrect"
-            )
+            raise InvalidCredentialsError()
         if not verify_password(password, user.hashed_password):
-            raise HTTPException(
-                status_code=401, detail="Username or password incorrect"
-            )
+            raise InvalidCredentialsError()
         refresh_token = self._generate_token(user.id, user.username, True)
         access_token = self._generate_token(user.id, user.username)
+
         return {
-            "access_token": access_token,
             "refresh_token": refresh_token,
-            "id": user.id,
-            "username": user.username,
+            "response": {
+                "access_token": access_token,
+                "token_type": "bearer",
+                "id": user.id,
+                "username": user.username,
+            },
         }
+
+    def refresh_access_token(self, refresh_token: str | None) -> dict:
+        if not refresh_token:
+            raise InvalidJwtTokenError()
+        try:
+            decoded = jwt.decode(
+                jwt=refresh_token, key=self.secret_key, algorithms=[self.jwt_algorithm]
+            )
+        except jwt.PyJWTError:
+            raise InvalidJwtTokenError()
+        payload = validate_jwt_payload(decoded)
+        if payload.type != "refresh":
+            raise InvalidJwtTokenError()
+        new_access_token = self._generate_token(payload.sub, payload.username)
+        return {"access_token": new_access_token}
 
     def _generate_token(
         self,
-        id: str,
+        id: str | int,
         username: str,
-        isRefresh: bool = False,
+        is_refresh: bool = False,
     ) -> str:
+        now = datetime.now(timezone.utc)
+        token_type = "refresh" if is_refresh else "access"
+        expire = now + timedelta(days=7) if is_refresh else now + timedelta(minutes=15)
         payload = {
-            "sub": id,
+            "sub": str(id),
             "username": username,
-            "exp": (
-                datetime.now(timezone.utc) + timedelta(days=7)
-                if isRefresh
-                else datetime.now(timezone.utc) + timedelta(minutes=15)
-            ),
+            "type": token_type,
+            "exp": expire,
         }
-        return jwt.encode(payload, self.secret_key, algorithm=self.jwt_algorithm)
+        return jwt.encode(
+            payload=payload, key=self.secret_key, algorithm=self.jwt_algorithm
+        )

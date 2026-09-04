@@ -1,4 +1,6 @@
 from pydantic import BaseModel, Field, EmailStr
+from typing import Literal
+from datetime import datetime
 
 
 class RegisterRequest(BaseModel):
@@ -10,10 +12,21 @@ class RegisterRequest(BaseModel):
 class RegisterResponse(BaseModel):
     username: str
     email: EmailStr
+    access_token: str
 
 
 class LoginResponse(BaseModel):
     access_token: str
-    refresh_token: str
     id: int
     username: str
+
+
+class RefreshResponse(BaseModel):
+    access_token: str
+
+
+class JwtTokenPayload(BaseModel):
+    sub: str
+    username: str
+    type: Literal["refresh", "access"]
+    exp: datetime
