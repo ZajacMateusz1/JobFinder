@@ -20,11 +20,19 @@ class AuthService:
 
     def register_user(self, user: RegisterRequest) -> dict:
         hashed_password = hash_password(user.password)
-        return self.auth_repository.create_user(
+        create_user_response = self.auth_repository.create_user(
             user.username,
             hashed_password,
             user.email,
         )
+        refresh_token = self._generate_token(
+            create_user_response["id"], create_user_response["username"], True
+        )
+        access_token = self._generate_token(
+            create_user_response["id"], create_user_response["username"]
+        )
+        create_user_response["access_token"] = access_token
+        return {"refresh_token": refresh_token, "response": create_user_response}
 
     def authenticate_user(self, username: str, password: str) -> dict:
         user = self.auth_repository.get_user_by_username(username)
@@ -64,11 +72,11 @@ class AuthService:
         self,
         id: str | int,
         username: str,
-        isRefresh: bool = False,
+        is_refresh: bool = False,
     ) -> str:
         now = datetime.now(timezone.utc)
-        token_type = "refresh" if isRefresh else "access"
-        expire = now + timedelta(days=7) if isRefresh else now + timedelta(minutes=15)
+        token_type = "refresh" if is_refresh else "access"
+        expire = now + timedelta(days=7) if is_refresh else now + timedelta(minutes=15)
         payload = {
             "sub": str(id),
             "username": username,

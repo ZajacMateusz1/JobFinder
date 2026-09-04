@@ -12,6 +12,7 @@ class RegisterRequest(BaseModel):
 class RegisterResponse(BaseModel):
     username: str
     email: EmailStr
+    access_token: str
 
 
 class LoginResponse(BaseModel):
