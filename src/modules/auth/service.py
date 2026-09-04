@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from .repository import AuthRepository
 from .utils import hash_password, verify_password, validate_jwt_payload
 from .schemas import RegisterRequest
-from .exceptions import InvalidCredentialsError
+from .exceptions import InvalidCredentialsError, InvalidJwtTokenError
 
 
 class AuthService:
@@ -12,7 +12,7 @@ class AuthService:
         self,
         auth_repository: AuthRepository,
         secret_key: str,
-        jwt_algorithm: str = "HS256",
+        jwt_algorithm: str,
     ):
         self.auth_repository = auth_repository
         self.secret_key = secret_key
@@ -39,6 +39,7 @@ class AuthService:
             "refresh_token": refresh_token,
             "response": {
                 "access_token": access_token,
+                "token_type": "bearer",
                 "id": user.id,
                 "username": user.username,
             },
@@ -46,15 +47,17 @@ class AuthService:
 
     def refresh_access_token(self, refresh_token: str | None) -> dict:
         if not refresh_token:
-            raise InvalidCredentialsError()
+            raise InvalidJwtTokenError()
         try:
-            decoded = jwt.decode(refresh_token, self.secret_key, self.jwt_algorithm)
+            decoded = jwt.decode(
+                jwt=refresh_token, key=self.secret_key, algorithms=[self.jwt_algorithm]
+            )
         except jwt.PyJWTError:
-            raise InvalidCredentialsError()
+            raise InvalidJwtTokenError()
         payload = validate_jwt_payload(decoded)
-        if payload.get("type") != "refresh":
-            raise InvalidCredentialsError()
-        new_access_token = self._generate_token(payload["sub"], payload["username"])
+        if payload.type != "refresh":
+            raise InvalidJwtTokenError()
+        new_access_token = self._generate_token(payload.sub, payload.username)
         return {"access_token": new_access_token}
 
     def _generate_token(
@@ -72,4 +75,6 @@ class AuthService:
             "type": token_type,
             "exp": expire,
         }
-        return jwt.encode(payload, self.secret_key, algorithm=self.jwt_algorithm)
+        return jwt.encode(
+            payload=payload, key=self.secret_key, algorithm=self.jwt_algorithm
+        )
