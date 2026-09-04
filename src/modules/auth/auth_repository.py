@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from src.db.models.user import User
 from src.db.models.preferences import Preferences
@@ -22,3 +23,7 @@ class AuthRepository:
             "username": new_user.username,
             "email": new_user.email,
         }
+
+    def get_user_by_username(self, username: str) -> User | None:
+        stmt = select(User).where(User.username == username)
+        return self.db.scalar(stmt)
