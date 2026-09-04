@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 import jwt
 from datetime import datetime, timedelta, timezone
 
