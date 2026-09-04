@@ -7,7 +7,7 @@ class LoginRequest(BaseModel):
 
 
 class RegisterRequest(LoginRequest):
-    email: EmailStr = Field(description="Email")
+    email: EmailStr = Field(description="Email", max_length=100)
 
 
 class RegisterResponse(BaseModel):
