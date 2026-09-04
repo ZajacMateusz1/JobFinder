@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 
 from .dependencies import get_auth_service
 from .service import AuthService
-from .schemas import RegisterRequest, RegisterResponse, LoginResponse
+from .schemas import RegisterRequest, RegisterResponse, LoginResponse, RefreshResponse
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -21,5 +21,19 @@ def register(
 def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    response: Response,
 ):
-    return auth_service.authenticate_user(form_data.username, form_data.password)
+    login_data = auth_service.authenticate_user(form_data.username, form_data.password)
+    response.set_cookie(
+        key="refresh_token",
+        value=login_data["refresh_token"],
+        httponly=True,
+    )
+    return login_data["response"]
+
+
+@auth_router.post("/refresh", response_model=RefreshResponse)
+def refresh(
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+):
+    pass

@@ -14,6 +14,11 @@ class RegisterResponse(BaseModel):
 
 class LoginResponse(BaseModel):
     access_token: str
-    refresh_token: str
+    id: int
+    username: str
+
+
+class RefreshResponse(BaseModel):
+    access_token: str
     id: int
     username: str

@@ -34,11 +34,14 @@ class AuthService:
             raise InvalidCredentialsError()
         refresh_token = self._generate_token(user.id, user.username, True)
         access_token = self._generate_token(user.id, user.username)
+
         return {
-            "access_token": access_token,
             "refresh_token": refresh_token,
-            "id": user.id,
-            "username": user.username,
+            "response": {
+                "access_token": access_token,
+                "id": user.id,
+                "username": user.username,
+            },
         }
 
     def _generate_token(
