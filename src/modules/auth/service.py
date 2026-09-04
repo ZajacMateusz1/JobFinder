@@ -2,9 +2,9 @@ from fastapi import HTTPException
 import jwt
 from datetime import datetime, timedelta, timezone
 
-from .auth_repository import AuthRepository
-from .auth_utils import hash_password, verify_password
-from .auth_schemas import RegisterRequest
+from .repository import AuthRepository
+from .utils import hash_password, verify_password
+from .schemas import RegisterRequest
 
 
 class AuthService:

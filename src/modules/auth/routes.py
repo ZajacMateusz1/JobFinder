@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 
-from .auth_dependencies import get_auth_service
-from .auth_service import AuthService
-from .auth_schemas import RegisterRequest, RegisterResponse, LoginResponse
+from .dependencies import get_auth_service
+from .service import AuthService
+from .schemas import RegisterRequest, RegisterResponse, LoginResponse
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 

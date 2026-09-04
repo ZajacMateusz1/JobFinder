@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.config.env import settings
-from .auth_service import AuthService
-from .auth_repository import AuthRepository
+from .service import AuthService
+from .repository import AuthRepository
 from src.db.connection import db_dependency
 
 
