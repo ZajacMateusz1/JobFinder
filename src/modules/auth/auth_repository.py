@@ -4,13 +4,19 @@ from src.db.models.preferences import Preferences
 
 
 class AuthRepository:
+    def __init__(self, db: Session):
+        self.db = db
+
     def create_user(
-        self, username: str, hashed_password: str, email: str, db: Session
+        self,
+        username: str,
+        hashed_password: str,
+        email: str,
     ) -> dict:
         new_user = User(username=username, hashed_password=hashed_password, email=email)
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
+        self.db.add(new_user)
+        self.db.commit()
+        self.db.refresh(new_user)
         return {
             "id": new_user.id,
             "username": new_user.username,
