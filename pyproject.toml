@@ -3,6 +3,7 @@ name = "job-finder"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
+    "alembic>=1.19.1",
     "argon2-cffi>=25.1.0",
     "fastapi[standard]>=0.141.1",
     "passlib>=1.7.4",
