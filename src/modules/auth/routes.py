@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, Cookie
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 
@@ -35,5 +35,6 @@ def login(
 @auth_router.post("/refresh", response_model=RefreshResponse)
 def refresh(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    refresh_token: Annotated[str | None, Cookie()],
 ):
-    pass
+    return auth_service.refresh_access_token(refresh_token)

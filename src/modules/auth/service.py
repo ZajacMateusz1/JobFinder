@@ -44,19 +44,31 @@ class AuthService:
             },
         }
 
+    def refresh_access_token(self, refresh_token: str | None) -> dict:
+        if not refresh_token:
+            raise InvalidCredentialsError()
+        try:
+            payload = jwt.decode(refresh_token, self.secret_key, self.jwt_algorithm)
+        except jwt.PyJWTError:
+            raise InvalidCredentialsError()
+        if payload.get("type") != "refresh":
+            raise InvalidCredentialsError()
+        new_access_token = self._generate_token(payload["sub"], payload["username"])
+        return {"access_token": new_access_token}
+
     def _generate_token(
         self,
-        id: str,
+        id: str | int,
         username: str,
         isRefresh: bool = False,
     ) -> str:
+        now = datetime.now(timezone.utc)
+        token_type = "refresh" if isRefresh else "access"
+        expire = now + timedelta(days=7) if isRefresh else now + timedelta(minutes=15)
         payload = {
-            "sub": id,
+            "sub": str(id),
             "username": username,
-            "exp": (
-                datetime.now(timezone.utc) + timedelta(days=7)
-                if isRefresh
-                else datetime.now(timezone.utc) + timedelta(minutes=15)
-            ),
+            "type": token_type,
+            "exp": expire,
         }
         return jwt.encode(payload, self.secret_key, algorithm=self.jwt_algorithm)

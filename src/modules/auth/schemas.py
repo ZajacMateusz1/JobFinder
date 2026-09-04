@@ -20,5 +20,3 @@ class LoginResponse(BaseModel):
 
 class RefreshResponse(BaseModel):
     access_token: str
-    id: int
-    username: str
