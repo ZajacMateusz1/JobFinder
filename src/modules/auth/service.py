@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from .repository import AuthRepository
 from .utils import hash_password, verify_password
 from .schemas import RegisterRequest
+from .exceptions import InvalidCredentialsError
 
 
 class AuthService:
@@ -29,13 +30,9 @@ class AuthService:
     def authenticate_user(self, username: str, password: str) -> dict:
         user = self.auth_repository.get_user_by_username(username)
         if not user:
-            raise HTTPException(
-                status_code=401, detail="Username or password incorrect"
-            )
+            raise InvalidCredentialsError()
         if not verify_password(password, user.hashed_password):
-            raise HTTPException(
-                status_code=401, detail="Username or password incorrect"
-            )
+            raise InvalidCredentialsError()
         refresh_token = self._generate_token(user.id, user.username, True)
         access_token = self._generate_token(user.id, user.username)
         return {
