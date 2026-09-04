@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 
-from src.modules.auth.auth_routes import auth_router
+from modules.auth.routes import auth_router
 
 app = FastAPI()
 
 
-@app.get("/health")
+@app.get("/api/health")
 def health_check():
     return {"message": "ok"}
 
