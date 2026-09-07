@@ -12,4 +12,5 @@ class PreferencesService:
     async def analyze_cv(self, cv_file: UploadFile):
         validate_cv_file(cv_file=cv_file)
         cv_content = await cv_file.read()
-        self.ai_service.analyze_cv(cv_content=cv_content)
+        result_cv = self.ai_service.analyze_cv(cv_content=cv_content)
+        print(result_cv)
