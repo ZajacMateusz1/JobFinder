@@ -8,13 +8,14 @@ class Preferences(Base):
     __tablename__ = "preferences"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    location: Mapped[str] = mapped_column(String(255), nullable=True)
+    location: Mapped[str | None] = mapped_column(String(255), nullable=True)
     min_salary: Mapped[Decimal | None] = mapped_column(DECIMAL(10, 2), nullable=True)
     max_salary: Mapped[Decimal | None] = mapped_column(DECIMAL(10, 2), nullable=True)
-    remote_work: Mapped[bool] = mapped_column(nullable=True)
+    remote_work: Mapped[bool | None] = mapped_column(nullable=True)
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"), unique=True, nullable=False
     )
+    experience_level: Mapped[str | None] = mapped_column(String(50), nullable=True)
     user: Mapped["User"] = relationship(back_populates="preferences")
     preferences_skills: Mapped["PreferencesSkills"] = relationship(
         back_populates="preferences"
