@@ -17,6 +17,6 @@ class Preferences(Base):
     )
     experience_level: Mapped[str | None] = mapped_column(String(50), nullable=True)
     user: Mapped["User"] = relationship(back_populates="preferences")
-    preferences_skills: Mapped["PreferencesSkills"] = relationship(
+    preferences_skills: Mapped[list["PreferencesSkills"]] = relationship(
         back_populates="preferences"
     )

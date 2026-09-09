@@ -1,7 +1,7 @@
 from google import genai
 from google.genai import types
 from .base import AIProvider
-from ..schemas import AnalyzeCvResponse
+from ..schemas import AnalyzeCvAiResponse
 
 
 class GeminiProvider(AIProvider):
@@ -39,7 +39,8 @@ class GeminiProvider(AIProvider):
                 prompt,
             ],
             config=types.GenerateContentConfig(
-                response_mime_type="application/json", response_schema=AnalyzeCvResponse
+                response_mime_type="application/json",
+                response_schema=AnalyzeCvAiResponse,
             ),
         )
         return interaction.parsed

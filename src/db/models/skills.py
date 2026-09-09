@@ -8,6 +8,6 @@ class Skills(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), unique=True)
-    preferences_skills: Mapped["PreferencesSkills"] = relationship(
+    preferences_skills: Mapped[list["PreferencesSkills"]] = relationship(
         back_populates="skills"
     )
