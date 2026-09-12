@@ -18,7 +18,10 @@ class GeminiProvider(AIProvider):
             - whether the candidate prefers/accepts remote work
             - technical and professional skills
             - overall experience level
-
+            
+            For skills, select only from the allowed Skill enum values.
+            If a skill from the CV is not represented by an allowed enum value, omit it.
+            
             For experience_level use exactly one of:
             - intern: internship/student with little or no professional experience
             - junior: entry-level professional
