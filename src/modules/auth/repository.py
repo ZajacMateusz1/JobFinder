@@ -1,8 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from src.db.models.user import User
-from src.db.models.preferences import Preferences
+from src.db.models import User
 from .exceptions import UserAlreadyExistsError
 
 

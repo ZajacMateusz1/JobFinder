@@ -1,10 +1,7 @@
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 from src.modules.ai.schemas import AnalyzeCvAiResponse
-from src.db.models.preferences import Preferences
-from src.db.models.preferences_skills import PreferencesSkills
-from src.db.models.skills import Skills
-from .schemas import CreatePreferencesRequest
+from src.db.models import Preferences
+from .schemas import PreferencesRequest
 
 
 class PreferencesRepository:
@@ -13,7 +10,7 @@ class PreferencesRepository:
 
     def save_preferences(
         self,
-        preferences_data: AnalyzeCvAiResponse | CreatePreferencesRequest,
+        preferences_data: AnalyzeCvAiResponse | PreferencesRequest,
         user_id: str,
     ):
         preferences = Preferences(
@@ -22,17 +19,13 @@ class PreferencesRepository:
             max_salary=preferences_data.max_salary,
             remote_work=preferences_data.remote_work,
             user_id=int(user_id),
+            skills=preferences_data.skills,
             experience_level=preferences_data.experience_level,
         )
         self._db.add(preferences)
-        self._db.flush()
-        find_skills_stmt = select(Skills.id).where(
-            Skills.name.in_(preferences_data.skills)
-        )
-        skills = [
-            PreferencesSkills(skills_id=skill_id, preferences_id=preferences.id)
-            for skill_id in self._db.scalars(find_skills_stmt)
-        ]
-        self._db.add_all(skills)
         self._db.commit()
+        self._db.refresh()
         return preferences
+
+    def change_preferences(self, new_preferences: PreferencesRequest, user_id: str):
+        pass
