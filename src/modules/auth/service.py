@@ -20,11 +20,16 @@ class AuthService:
 
     def register_user(self, user: RegisterRequest) -> dict:
         hashed_password = hash_password(user.password)
-        create_user_response = self.auth_repository.create_user(
+        created_user = self.auth_repository.create_user(
             user.username,
             hashed_password,
             user.email,
         )
+        create_user_response = {
+            "id": created_user.id,
+            "username": created_user.username,
+            "email": created_user.email,
+        }
         refresh_token = self._generate_token(
             create_user_response["id"], create_user_response["username"], True
         )

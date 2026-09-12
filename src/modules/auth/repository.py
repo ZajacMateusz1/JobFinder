@@ -1,8 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from src.db.models.user import User
-from src.db.models.preferences import Preferences
+from src.db.models import User
 from .exceptions import UserAlreadyExistsError
 
 
@@ -16,19 +15,15 @@ class AuthRepository:
         hashed_password: str,
         email: str,
     ) -> dict:
-        new_user = User(username=username, hashed_password=hashed_password, email=email)
-        self.db.add(new_user)
+        user = User(username=username, hashed_password=hashed_password, email=email)
+        self.db.add(user)
         try:
             self.db.commit()
         except IntegrityError:
             self.db.rollback()
             raise UserAlreadyExistsError()
-        self.db.refresh(new_user)
-        return {
-            "id": new_user.id,
-            "username": new_user.username,
-            "email": new_user.email,
-        }
+        self.db.refresh(user)
+        return user
 
     def get_user_by_username(self, username: str) -> User | None:
         stmt = select(User).where(User.username == username)

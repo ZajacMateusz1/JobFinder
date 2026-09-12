@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     db_url: str
     secret_key: str
     jwt_algorithm: str
+    gemini_api_key: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
