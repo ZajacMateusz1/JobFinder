@@ -15,3 +15,8 @@ class InvalidFileSizeError(AppException):
             status_code=413,
             message="Invalid file size.",
         )
+
+
+class UserPreferencesNotFoundError(AppException):
+    def __init__(self):
+        super().__init__(404, "User preferences not found")

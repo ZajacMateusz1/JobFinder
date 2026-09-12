@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from src.modules.ai.schemas import AnalyzeCvAiResponse
 from src.db.models import Preferences, Skills
 from .schemas import PreferencesRequest
+from .exceptions import UserPreferencesNotFoundError
 
 
 class PreferencesRepository:
@@ -31,4 +32,18 @@ class PreferencesRepository:
         return preferences
 
     def change_preferences(self, new_preferences: PreferencesRequest, user_id: str):
-        pass
+        stmt = select(Preferences).where(Preferences.user_id == int(user_id))
+        preferences = self._db.scalar(stmt)
+        if preferences is None:
+            raise UserPreferencesNotFoundError()
+        data = new_preferences.model_dump(exclude_unset=True)
+        if "skills" in data:
+            stmt = select(Skills).where(Skills.name.in_(data["skills"]))
+            skills = self._db.scalars(stmt).all()
+            preferences.skills = skills
+        for key, value in data.items():
+            if key != "skills":
+                preferences.__setattr__(key, value)
+        self._db.commit()
+        self._db.refresh(preferences)
+        return preferences

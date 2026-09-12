@@ -26,6 +26,7 @@ class PreferencesService:
         return create_preferences_response
 
     def change_preferences(self, new_preferences: PreferencesRequest, user_id: str):
-        self.change_preferences_response = self._repository.change_preferences(
+        change_preferences_response = self._repository.change_preferences(
             new_preferences=new_preferences, user_id=user_id
         )
+        return change_preferences_response

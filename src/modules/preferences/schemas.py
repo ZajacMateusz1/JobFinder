@@ -31,9 +31,9 @@ class Skill(StrEnum):
     MOONGOOSE = "mongoose"
 
 
-class CreatePreferencesRequest(BaseModel):
+class PreferencesRequest(BaseModel):
     location: str | None = Field(min_length=1, default=None)
-    skills: list[Skill]
+    skills: list[Skill] | None = Field(default=None)
     min_salary: Decimal | None = Field(default=None)
     max_salary: Decimal | None = Field(default=None)
     remote_work: bool | None = Field(default=None)
