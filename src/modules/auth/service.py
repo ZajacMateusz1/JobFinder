@@ -14,13 +14,13 @@ class AuthService:
         secret_key: str,
         jwt_algorithm: str,
     ):
-        self.auth_repository = auth_repository
-        self.secret_key = secret_key
-        self.jwt_algorithm = jwt_algorithm
+        self._auth_repository = auth_repository
+        self._secret_key = secret_key
+        self._jwt_algorithm = jwt_algorithm
 
     def register_user(self, user: RegisterRequest) -> dict:
         hashed_password = hash_password(user.password)
-        created_user = self.auth_repository.create_user(
+        created_user = self._auth_repository.create_user(
             user.username,
             hashed_password,
             user.email,
@@ -40,7 +40,7 @@ class AuthService:
         return {"refresh_token": refresh_token, "response": create_user_response}
 
     def authenticate_user(self, username: str, password: str) -> dict:
-        user = self.auth_repository.get_user_by_username(username)
+        user = self._auth_repository.get_user_by_username(username)
         if not user:
             raise InvalidCredentialsError()
         if not verify_password(password, user.hashed_password):
@@ -63,7 +63,9 @@ class AuthService:
             raise InvalidJwtTokenError()
         try:
             decoded = jwt.decode(
-                jwt=refresh_token, key=self.secret_key, algorithms=[self.jwt_algorithm]
+                jwt=refresh_token,
+                key=self._secret_key,
+                algorithms=[self._jwt_algorithm],
             )
         except jwt.PyJWTError:
             raise InvalidJwtTokenError()
@@ -89,5 +91,5 @@ class AuthService:
             "exp": expire,
         }
         return jwt.encode(
-            payload=payload, key=self.secret_key, algorithm=self.jwt_algorithm
+            payload=payload, key=self._secret_key, algorithm=self._jwt_algorithm
         )

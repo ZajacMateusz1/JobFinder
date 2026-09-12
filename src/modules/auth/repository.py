@@ -7,7 +7,7 @@ from .exceptions import UserAlreadyExistsError
 
 class AuthRepository:
     def __init__(self, db: Session):
-        self.db = db
+        self._db = db
 
     def create_user(
         self,
@@ -16,15 +16,15 @@ class AuthRepository:
         email: str,
     ) -> dict:
         user = User(username=username, hashed_password=hashed_password, email=email)
-        self.db.add(user)
+        self._db.add(user)
         try:
-            self.db.commit()
+            self._db.commit()
         except IntegrityError:
-            self.db.rollback()
+            self._db.rollback()
             raise UserAlreadyExistsError()
-        self.db.refresh(user)
+        self._db.refresh(user)
         return user
 
     def get_user_by_username(self, username: str) -> User | None:
         stmt = select(User).where(User.username == username)
-        return self.db.scalar(stmt)
+        return self._db.scalar(stmt)
