@@ -7,7 +7,7 @@ class Skills(Base):
     __tablename__ = "skills"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(255), unique=True)
-    preferences_skills: Mapped[list["PreferencesSkills"]] = relationship(
-        back_populates="skills"
+    name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    preferences: Mapped[list["Preferences"]] = relationship(
+        secondary="preferences_skills", back_populates="skills"
     )

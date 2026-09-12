@@ -9,7 +9,7 @@ from src.db.connection import Base
 from src.db.models.user import User
 from src.db.models.preferences import Preferences
 from src.db.models.skills import Skills
-from src.db.models.preferences_skills import PreferencesSkills
+from src.db.models.preferences_skills import preferences_skills
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
