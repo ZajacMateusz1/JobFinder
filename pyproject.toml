@@ -10,6 +10,7 @@ dependencies = [
     "passlib>=1.7.4",
     "psycopg[binary]>=3.3.5",
     "pyjwt>=2.13.0",
+    "scrapeops-scrapy-proxy-sdk>=1.1",
     "scrapy>=2.19.0",
     "sqlalchemy>=2.0.52",
 ]

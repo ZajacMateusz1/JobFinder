@@ -1404,6 +1404,7 @@ dependencies = [
     { name = "passlib" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pyjwt" },
+    { name = "scrapeops-scrapy-proxy-sdk" },
     { name = "scrapy" },
     { name = "sqlalchemy" },
 ]
@@ -1417,6 +1418,7 @@ requires-dist = [
     { name = "passlib", specifier = ">=1.7.4" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.5" },
     { name = "pyjwt", specifier = ">=2.13.0" },
+    { name = "scrapeops-scrapy-proxy-sdk", specifier = ">=1.1" },
     { name = "scrapy", specifier = ">=2.19.0" },
     { name = "sqlalchemy", specifier = ">=2.0.52" },
 ]
@@ -2560,6 +2562,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/70/6f/6d90ff36a046d2d05c55c9f8d6287e3d5a8ebe0fddd50dce8872019d4462/rignore-0.8.1-pp311-pypy311_pp73-musllinux_1_2_i686.whl", hash = "sha256:0dc7765f94d6660574d648c89e28c9932248499d47dad49c2786f2e49231e1d9", size = 1147729, upload-time = "2026-08-04T22:27:04.729Z" },
     { url = "https://files.pythonhosted.org/packages/d8/de/d2c11ed977298cee41c23b6625da9f816ba9f7b91005dfb6674cc0bec09c/rignore-0.8.1-pp311-pypy311_pp73-musllinux_1_2_x86_64.whl", hash = "sha256:f7b929db3f8f3fa240b0f328453de0b1b747e51b7992a9198c8412d16f4f0027", size = 1144578, upload-time = "2026-08-04T22:27:06.473Z" },
 ]
+
+[[package]]
+name = "scrapeops-scrapy-proxy-sdk"
+version = "1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "scrapy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/68/bd/19c0c6ce945069ecc8b1af2ab18a96bce6682d039abb75d1f3e771ced3a2/scrapeops_scrapy_proxy_sdk-1.1.tar.gz", hash = "sha256:2df4ff656d3ede811476fcf773b3b3e8d1f375be55952776fefd6290d7581643", size = 4353, upload-time = "2026-06-25T13:33:02.487Z" }
 
 [[package]]
 name = "scrapy"
