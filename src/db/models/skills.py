@@ -11,3 +11,6 @@ class Skills(Base):
     preferences: Mapped[list["Preferences"]] = relationship(
         secondary="preferences_skills", back_populates="skills"
     )
+    jobs: Mapped[list["Jobs"]] = relationship(
+        secondary="jobs_skills", back_populates="skills"
+    )
