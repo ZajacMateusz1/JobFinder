@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.connection import Base
 from datetime import datetime
-from decimal import Decimal
 
 
 class Jobs(Base):
@@ -15,7 +14,7 @@ class Jobs(Base):
     description: Mapped[str] = mapped_column(nullable=False)
     posted_at: Mapped[datetime] = mapped_column(nullable=False)
     expire_at: Mapped[datetime] = mapped_column(nullable=False)
-    salary: Mapped[Decimal | None] = mapped_column(default=None)
+    salary: Mapped[str | None] = mapped_column(default=None)
     skills: Mapped[list["Skills"]] = relationship(
         secondary="jobs_skills", back_populates="jobs"
     )

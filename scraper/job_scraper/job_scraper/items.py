@@ -4,7 +4,6 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 from dataclasses import dataclass
-from decimal import Decimal
 from datetime import datetime
 
 
@@ -18,4 +17,4 @@ class JobScraperItem:
     description: str
     posted_at: datetime
     expire_at: datetime
-    salary: Decimal | None
+    salary: str | None
