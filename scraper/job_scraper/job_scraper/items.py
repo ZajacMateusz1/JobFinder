@@ -4,10 +4,18 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 from dataclasses import dataclass
+from decimal import Decimal
+from datetime import datetime
 
 
 @dataclass
 class JobScraperItem:
-    # define the fields for your item here like:
-    # name: str | None = None
-    pass
+    title: str
+    company: str
+    location: str
+    skills: list[str]
+    url: str
+    description: str
+    posted_at: datetime
+    expire_at: datetime
+    salary: Decimal | None
